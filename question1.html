@@ -31,17 +31,10 @@
       z-index: -1;
     }
 
-    /* Dolunay ışık animasyonu */
     @keyframes increaseLight {
-      0% {
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); /* Başlangıçtaki ışık */
-      }
-      50% {
-        box-shadow: 0 0 150px rgba(255, 255, 255, 1); /* Daha geniş ışık */
-      }
-      100% {
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); /* Başlangıçtaki ışık */
-      }
+      0% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
+      50% { box-shadow: 0 0 150px rgba(255, 255, 255, 1); }
+      100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
     }
 
     @keyframes rotate {
@@ -69,7 +62,7 @@
       margin: 0 auto 15px;
       animation: rotate 4s linear infinite;
     }
-    /* Üçgen sembolleri chatGPT ile birlikte tasarladık. */
+
     .north, .south {
       width: 0;
       height: 0;
@@ -92,34 +85,21 @@
       top: 20px;
     }
 
-    /* Dolunayı chatGPT ile birlikte tasarladım. */
     .parlak-dolunay {
       position: absolute;
       background-color: rgba(255, 255, 255, 0.8);
       border-radius: 50%;
       width: 20px;
       height: 20px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); /* Başlangıçtaki ışık */
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
       z-index: 0;
       transition: box-shadow 0.5s ease-in-out;
-      animation: increaseLight 3s infinite; /* Animasyonu sürekli yap */
+      animation: increaseLight 3s infinite;
     }
 
-    /* Dolunayların konumunu ayarladım. */
-    .parlak-dolunay-1 {
-      bottom: -28%;
-      left: 124%;
-    }
-
-    .parlak-dolunay-2 {
-      bottom: -28%;
-      left: -12%;
-    }
-
-    .parlak-dolunay-3 {
-      bottom: -24%;
-      left: 48%;
-    }
+    .parlak-dolunay-1 { bottom: -28%; left: 124%; }
+    .parlak-dolunay-2 { bottom: -28%; left: -12%; }
+    .parlak-dolunay-3 { bottom: -24%; left: 48%; }
 
     input {
       display: block;
@@ -153,25 +133,69 @@
     button:hover {
       background: rgb(98, 13, 13);
     }
+
+    .clock {
+      margin-top: 15px;
+      font-size: 18px;
+      font-family: 'Arial', sans-serif;
+      color: white;
+    }
   </style>
 </head>
 <body>
-
   <div class="login-container">
     <div class="compass">
       <div class="north"></div>
       <div class="south"></div>
     </div>
     <h2>Stranger Things Login</h2>
-    <input type="text" placeholder="Username" required>
-    <input type="password" placeholder="Password" required>
-    <button>
-      Login
-      <div class="parlak-dolunay parlak-dolunay-1"></div> <!-- Birinci Dolunay -->
-      <div class="parlak-dolunay parlak-dolunay-2"></div> <!-- İkinci Dolunay -->
-      <div class="parlak-dolunay parlak-dolunay-3"></div> <!-- Üçüncü Dolunay -->
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button id="login-btn">Login
+      <div class="parlak-dolunay parlak-dolunay-1"></div>
+      <div class="parlak-dolunay parlak-dolunay-2"></div>
+      <div class="parlak-dolunay parlak-dolunay-3"></div>
     </button>
+    <div class="clock" id="clock"></div>
   </div>
 
+  <script>
+    const loginData = [];
+    document.getElementById("login-btn").addEventListener("click", function() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      
+      if (username && password) {
+        loginData.push({ username, password });
+        console.log("Girişler:", loginData);
+      } else {
+        console.log("Lütfen kullanıcı adı ve şifre girin!");
+      }
+    });
+
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const timeString = `${hours}:${minutes}:${seconds}`;
+      document.getElementById("clock").textContent = timeString;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock(); // Initialize clock on load
+    document.addEventListener("keydown", function(event) {
+  if (event.key.toLowerCase() === "h") {
+    const loginContainer = document.querySelector(".login-container");
+
+    if (loginContainer) {
+      loginContainer.style.display = (loginContainer.style.display === "none") ? "block" : "none";
+    }
+  }
+});
+  </script>
 </body>
 </html>
+
+
+
