@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Information</title>
+    <style>
+        /* Form kısmındaki konum, yazı tipi ayrlarında GPT'den yardım aldım.*/
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background: url('stranger.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            background: rgb(17, 54, 88);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: 0 auto;
+        }
+        input, textarea, button {
+            width: 95%;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #141313;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        input:focus, textarea:focus {
+            border-color: #FF5733;
+            background-color: #f8f9fa;
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 87, 51, 0.6);
+        }
+        button {
+            background-color: #007bff;
+            color: rgb(5, 4, 4);
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 50%;
+            max-width: 400px;
+            margin: 10px auto;
+            border-collapse: collapse;
+            background: rgb(255, 255, 255);
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        tr:hover {
+            background-color: #fdfdfd;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Class Information Form</h2>
+    
+    <form id="classForm">
+        <label for="className">Class Name:</label>
+        <input type="text" id="className" required>
+        
+        <label for="numPeople">Number of People:</label>
+        <input type="number" id="numPeople" required>
+
+        <label for="description">Description:</label>
+        <textarea id="description" rows="3" required></textarea>
+
+        <button type="submit">Add Class</button>
+    </form>
+
+    <h2>Class Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Class Name</th>
+                <th id="sortableColumn">Number of People</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="classTableBody">
+        <!--classTableBody dinamikliği kısmında GPT'den yardım aldım.-->
+        </tbody>
+    </table>
+
+    <script> // Class Table kısımını GPT ile birlikte yaptık.
+        document.getElementById("classForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            const className = document.getElementById("className").value;
+            const numPeople = document.getElementById("numPeople").value;
+            const description = document.getElementById("description").value;
+    
+            if (className && numPeople && description) {
+                const tableBody = document.getElementById("classTableBody");
+    
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td ondblclick="editCell(this)">${className}</td>
+                    <td ondblclick="editCell(this)">${numPeople}</td>
+                    <td ondblclick="editCell(this)">${description}</td>
+                    <td><button onclick="deleteRow(this)">Delete</button></td>
+                `;
+    
+                tableBody.appendChild(newRow);
+    
+                
+                document.getElementById("classForm").reset();
+            } else {
+                alert("Please fill in all fields!");
+            }
+        });
+        // Delete komutunu GPT ile birlikte yaptık.
+        function deleteRow(button) {
+            button.parentElement.parentElement.remove();
+            alert("Başarıyla delete yaptınız!"); 
+        }
+    
+        function editCell(cell) {
+            const oldValue = cell.innerText;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = oldValue;
+            input.style.width = "100%";
+    
+            input.addEventListener("blur", function() {
+                cell.innerText = input.value;
+            });
+    
+            input.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    cell.innerText = input.value;
+                }
+            });
+    
+            cell.innerText = "";
+            cell.appendChild(input);
+            input.focus();
+        }
+        
+            // "Number of People" sıralamasını GPT ile yaptık
+
+        document.getElementById("sortableColumn").addEventListener("click", function() {
+            sortTable();
+        });
+
+        function sortTable() {
+            const tableBody = document.getElementById("classTableBody");
+            const rows = Array.from(tableBody.rows);
+    
+            rows.sort((a, b) => {
+                const numA = parseInt(a.cells[1].innerText, 10);
+                const numB = parseInt(b.cells[1].innerText, 10);
+                return numA - numB; // Ascending order
+            });
+    
+            
+            tableBody.innerHTML = "";
+            rows.forEach(row => tableBody.appendChild(row));
+        }
+    </script>
+</body>
+</html>
