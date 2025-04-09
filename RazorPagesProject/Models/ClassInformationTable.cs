@@ -1,13 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 
-public class ClassInformationModel
+public class ClassInformationTable
 {
-    public int Id { get; set; } // Bu tabloda gösterilmeyecek ama arka planda kullanılacak.
+    // ID tabloda gösterilmeyecek ancak arka planda kullanılacak.
+    public int Id { get; set; }
 
     [Required(ErrorMessage = "Class Name is required.")]
     public string ClassName { get; set; } = string.Empty;
 
-    public int StudentCount { get; set; } // Sayı olduğu için boş geçilemez zaten.
+    public int StudentCount { get; set; }
 
     [Required(ErrorMessage = "Description is required.")]
     public string Description { get; set; } = string.Empty;

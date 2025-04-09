@@ -10,12 +10,49 @@ namespace RazorPagesProject.Pages
         // Sınıfların saklanacağı liste (Geçici veritabanı)
         public static List<ClassInformationModel> ClassList { get; set; } = new List<ClassInformationModel>();
 
-        // Yeni sınıf bilgisi eklemek için kullanılacak model
-        [BindProperty]
-        public ClassInformationModel NewClass { get; set; } = new ClassInformationModel();
+        // Filtreleme ve sayfalama özellikleri
+        [BindProperty(SupportsGet = true)]
+        public string FilterClassName { get; set; }
 
-        // Sayfa yüklendiğinde listeyi görüntüle
-        public void OnGet() { }
+        [BindProperty(SupportsGet = true)]
+        public int CurrentPage { get; set; } = 1;
+
+        public int TotalPages { get; set; }
+        public List<ClassInformationTable> FilteredClassList { get; set; }
+        
+
+        // Sayfa yüklendiğinde filtreleme ve sayfalama yapılacak
+        public void OnGet()
+        {
+            if (ClassList.Count == 0)
+            {
+                ClassList = GenerateTestData();
+            }
+            // Filtreleme ve sayfalama işlemi
+            var query = ClassList.AsQueryable();
+
+            // Filtreleme
+            if (!string.IsNullOrEmpty(FilterClassName))
+            {
+                query = query.Where(c => c.ClassName.Contains(FilterClassName));
+            }
+
+            // Sayfalama
+            int pageSize = 10;  // Sayfa başına gösterilecek öğe sayısı
+            TotalPages = (int)System.Math.Ceiling(query.Count() / (double)pageSize);
+
+            FilteredClassList = query
+                .Skip((CurrentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(c => new ClassInformationTable
+                {
+                    Id = c.Id,
+                    ClassName = c.ClassName,
+                    StudentCount = c.StudentCount,
+                    Description = c.Description
+                })
+                .ToList();
+        }
 
         // Formdan gelen veriyi listeye ekle
         public IActionResult OnPostAdd()
@@ -26,9 +63,14 @@ namespace RazorPagesProject.Pages
             }
 
             // ID otomatik artırılıyor
-            NewClass.Id = ClassList.Count > 0 ? ClassList.Max(c => c.Id) + 1 : 1;
-            ClassList.Add(NewClass);
-
+            var newClass = new ClassInformationModel
+            {
+                Id = ClassList.Count > 0 ? ClassList.Max(c => c.Id) + 1 : 1,
+                ClassName = FilteredClassList.FirstOrDefault()?.ClassName,
+                StudentCount = FilteredClassList.FirstOrDefault()?.StudentCount ?? 0,
+                Description = FilteredClassList.FirstOrDefault()?.Description
+            };
+            ClassList.Add(newClass);
             return RedirectToPage();
         }
 
@@ -43,29 +85,23 @@ namespace RazorPagesProject.Pages
 
             return RedirectToPage();
         }
+        public static List<ClassInformationModel> GenerateTestData()
+{
+    var random = new Random();
+    var classList = new List<ClassInformationModel>();
 
-        // Düzenleme için formu doldurma
-        public void OnGetEdit(int id)
+    for (int i = 1; i <= 100; i++)
+    {
+        classList.Add(new ClassInformationModel
         {
-            var classToEdit = ClassList.FirstOrDefault(c => c.Id == id);
-            if (classToEdit != null)
-            {
-                NewClass = classToEdit;
-            }
-        }
+            Id = i,
+            ClassName = "Class " + i,
+            StudentCount = random.Next(10, 50),
+            Description = "Description for class " + i
+        });
+    }
 
-        // Güncellenmiş veriyi kaydetme
-        public IActionResult OnPostEdit()
-        {
-            var classToUpdate = ClassList.FirstOrDefault(c => c.Id == NewClass.Id);
-            if (classToUpdate != null)
-            {
-                classToUpdate.ClassName = NewClass.ClassName;
-                classToUpdate.StudentCount = NewClass.StudentCount;
-                classToUpdate.Description = NewClass.Description;
-            }
-
-            return RedirectToPage();
-        }
+    return classList;
+    }
     }
 }

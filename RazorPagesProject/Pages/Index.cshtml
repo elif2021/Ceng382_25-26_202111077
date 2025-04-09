@@ -1,69 +1,72 @@
 ﻿@page
 @model RazorPagesProject.Pages.IndexModel
 @{
-    ViewData["Title"] = "Class Management";
+    ViewData["Title"] = "Class List";
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <!-- Sol tarafta Form -->
-        <div class="col-md-4">
-            <h3>Add / Edit Class</h3>
-            <form method="post">
-                <input type="hidden" asp-for="NewClass.Id" />
+<h1>Class List</h1>
 
-                <div class="mb-3">
-                    <label class="form-label">Class Name</label>
-                    <input type="text" class="form-control" asp-for="NewClass.ClassName" required />
-                </div>
+<form method="get">
+    <input type="text" name="FilterClassName" value="@Model.FilterClassName" placeholder="Filter by Class Name" />
+    <button type="submit">Filter</button>
+</form>
 
-                <div class="mb-3">
-                    <label class="form-label">Student Count</label>
-                    <input type="number" class="form-control" asp-for="NewClass.StudentCount" required />
-                </div>
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Class Name</th>
+            <th>Student Count</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.FilteredClassList)
+        {
+            <tr>
+                <td>@item.ClassName</td>
+                <td>@item.StudentCount</td>
+                <td>@item.Description</td>
+                <td>
+                    <form method="post" asp-page-handler="Delete">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-                <div class="mb-3">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-control" asp-for="NewClass.Description"></textarea>
-                </div>
+<div>
+    @for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        if (i == Model.CurrentPage)
+        {
+            <strong>@i</strong>
+        }
+        else
+        {
+            <a asp-page="./Index" asp-route-CurrentPage="@i" asp-route-FilterClassName="@Model.FilterClassName">@i</a>
+        }
 
-                <button type="submit" class="btn btn-primary" asp-page-handler="Add">Add Class</button>
-                <button type="submit" class="btn btn-success" asp-page-handler="Edit">Save Changes</button>
-            </form>
-        </div>
-
-        <!-- Sağ tarafta Tablo -->
-        <div class="col-md-8">
-            <h3>Class List</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Class Name</th>
-                        <th>Student Count</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in IndexModel.ClassList)
-                    {
-                        <tr>
-                            <td>@item.Id</td>
-                            <td>@item.ClassName</td>
-                            <td>@item.StudentCount</td>
-                            <td>@item.Description</td>
-                            <td>
-                                <a asp-page="./Index" asp-route-id="@item.Id" asp-page-handler="Edit" class="btn btn-warning btn-sm">Edit</a>
-                                <form method="post" style="display:inline;">
-                                    <input type="hidden" name="id" value="@item.Id" />
-                                    <button type="submit" asp-page-handler="Delete" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <text> </text>
+    }
 </div>
+<h2>Add New Class</h2>
+
+<form method="post" asp-page-handler="Add">
+    <div>
+        <label>Class Name:</label>
+        <input type="text" name="FilteredClassList[0].ClassName" required />
+    </div>
+    <div>
+        <label>Student Count:</label>
+        <input type="number" name="FilteredClassList[0].StudentCount" required />
+    </div>
+    <div>
+        <label>Description:</label>
+        <input type="text" name="FilteredClassList[0].Description" required />
+    </div>
+    <button type="submit">Add Class</button>
+</form>
