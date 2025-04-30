@@ -39,22 +39,8 @@
                     <textarea class="form-control" asp-for="NewClass.Description"></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary mb-2" asp-page-handler="Add">Add Class</button>
-                <button type="submit" class="btn btn-success mb-2" asp-page-handler="Edit">Save Changes</button>
-            </form>
-        </div>
-
-        <!-- Export Butonları (ClassName zorunlu olmasın) -->
-        <div class="col-md-4">
-            <h3>Export Data</h3>
-            <form method="post">
-                <!-- Export All Data Button -->
-                <button type="submit" asp-page-handler="SmartExportJson" class="btn btn-primary mb-2">Export All Data as JSON</button>
-                
-                <!-- Export Filtered Data Button -->
-                <input type="hidden" name="FilterText" value="@Model.FilterText" />
-                <input type="hidden" id="selectedColumns" name="selectedColumns" value="@Model.SelectedColumns" />
-                <input type="hidden" id="pageNumber" name="pageNumber" value="@Model.PageNumber" />
+                <button type="submit" class="btn btn-primary" asp-page-handler="Add">Add Class</button>
+                <button type="submit" class="btn btn-success" asp-page-handler="Edit">Save Changes</button>
             </form>
         </div>
 
@@ -64,9 +50,9 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th class="selectable-column" onclick="toggleColumn(this, 'ClassName')">Class Name</th>
-                        <th class="selectable-column" onclick="toggleColumn(this, 'StudentCount')">Student Count</th>
-                        <th class="selectable-column" onclick="toggleColumn(this, 'Description')">Description</th>
+                        <th>Class Name</th>
+                        <th>Student Count</th>
+                        <th>Description</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -78,7 +64,7 @@
                             <td>@item.StudentCount</td>
                             <td>@item.Description</td>
                             <td>
-                                @* Edit ve Delete Butonları *@
+                                <!-- Edit ve Delete Butonları -->
                                 <a asp-page="./Index" asp-route-id="@item.Id" asp-page-handler="Edit" class="btn btn-warning btn-sm">Edit</a>
                                 <form method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
@@ -104,36 +90,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        const selectedColumns = new Set();
-
-        function toggleColumn(th, columnName) {
-            const columnIndex = Array.from(th.parentNode.children).indexOf(th); // başlığın index'ini al
-            const rows = document.querySelectorAll("tbody tr"); // tüm satırları al
-
-            if (selectedColumns.has(columnName)) {
-                selectedColumns.delete(columnName);
-                th.style.backgroundColor = ''; // başlığı eski haline döndür
-
-                // O sütundaki hücreleri eski haline döndür
-                rows.forEach(row => {
-                    row.children[columnIndex].style.backgroundColor = '';
-                });
-            } else {
-                selectedColumns.add(columnName);
-                th.style.backgroundColor = '#d1e7dd'; // başlık yeşilimsi
-
-                // O sütundaki tüm hücreleri renklendir
-                rows.forEach(row => {
-                    row.children[columnIndex].style.backgroundColor = '#d1e7dd';
-                });
-            }
-
-            // Hidden input'u güncelle
-            document.getElementById('selectedColumns').value = Array.from(selectedColumns).join(',');
-        }
-    </script>
-
-}
