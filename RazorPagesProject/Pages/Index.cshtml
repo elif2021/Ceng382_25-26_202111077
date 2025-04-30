@@ -6,6 +6,7 @@
 
 <h1>Class List</h1>
 
+<!-- Filtreleme Formu -->
 <form method="get">
     <input type="text" name="FilterClassName" value="@Model.FilterClassName" placeholder="Filter by Class Name" />
     <button type="submit">Filter</button>
@@ -28,6 +29,10 @@
                 <td>@item.StudentCount</td>
                 <td>@item.Description</td>
                 <td>
+                    <!-- Edit Butonu -->
+                    <a asp-page="/Edit" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+
+                    <!-- Delete Butonu -->
                     <form method="post" asp-page-handler="Delete">
                         <input type="hidden" name="id" value="@item.Id" />
                         <button type="submit">Delete</button>
@@ -53,20 +58,22 @@
         <text> </text>
     }
 </div>
+
 <h2>Add New Class</h2>
 
+<!-- Yeni Sınıf Ekleme Formu -->
 <form method="post" asp-page-handler="Add">
     <div>
         <label>Class Name:</label>
-        <input type="text" name="FilteredClassList[0].ClassName" required />
+        <input type="text" name="ClassName" required />
     </div>
     <div>
         <label>Student Count:</label>
-        <input type="number" name="FilteredClassList[0].StudentCount" required />
+        <input type="number" name="StudentCount" required />
     </div>
     <div>
         <label>Description:</label>
-        <input type="text" name="FilteredClassList[0].Description" required />
+        <input type="text" name="Description" required />
     </div>
     <button type="submit">Add Class</button>
 </form>
