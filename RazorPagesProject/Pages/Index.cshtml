@@ -1,72 +1,139 @@
-﻿@page
+﻿﻿@page
 @model RazorPagesProject.Pages.IndexModel
 @{
-    ViewData["Title"] = "Class List";
+    ViewData["Title"] = "Class Management";
 }
 
-<h1>Class List</h1>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sol tarafta Filtreleme Formu -->
+        <div class="col-md-4">
+            <h3>Filter Classes</h3>
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label">Class Name</label>
+                    <input type="text" class="form-control" name="FilterText" value="@Model.FilterText" />
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
 
-<form method="get">
-    <input type="text" name="FilterClassName" value="@Model.FilterClassName" placeholder="Filter by Class Name" />
-    <button type="submit">Filter</button>
-</form>
+        <!-- Sağ tarafta Sınıf Ekleme ve Düzenleme Formu -->
+        <div class="col-md-4">
+            <h3>@(Model.NewClass.Id == 0 ? "Add New Class" : "Edit Class")</h3>
+            <form method="post">
+                <input type="hidden" asp-for="NewClass.Id" />
 
-<table border="1" cellpadding="5">
-    <thead>
-        <tr>
-            <th>Class Name</th>
-            <th>Student Count</th>
-            <th>Description</th>
-            <th>Actions</th> 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.FilteredClassList)
-        {
-            <tr>
-                <td>@item.ClassName</td>
-                <td>@item.StudentCount</td>
-                <td>@item.Description</td>
-                <td>
-                    <form method="post" asp-page-handler="Delete">
-                        <input type="hidden" name="id" value="@item.Id" />
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                <div class="mb-3">
+                    <label class="form-label">Class Name</label>
+                    <input type="text" class="form-control" asp-for="NewClass.ClassName" required />
+                </div>
 
-<div>
-    @for (int i = 1; i <= Model.TotalPages; i++)
-    {
-        if (i == Model.CurrentPage)
-        {
-            <strong>@i</strong>
-        }
-        else
-        {
-            <a asp-page="./Index" asp-route-CurrentPage="@i" asp-route-FilterClassName="@Model.FilterClassName">@i</a>
-        }
+                <div class="mb-3">
+                    <label class="form-label">Student Count</label>
+                    <input type="number" class="form-control" asp-for="NewClass.StudentCount" required />
+                </div>
 
-        <text> </text>
-    }
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" asp-for="NewClass.Description"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary mb-2" asp-page-handler="Add">Add Class</button>
+                <button type="submit" class="btn btn-success mb-2" asp-page-handler="Edit">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Export Butonları (ClassName zorunlu olmasın) -->
+        <div class="col-md-4">
+            <h3>Export Data</h3>
+            <form method="post">
+                <!-- Export All Data Button -->
+                <button type="submit" asp-page-handler="SmartExportJson" class="btn btn-primary mb-2">Export All Data as JSON</button>
+                
+                <!-- Export Filtered Data Button -->
+                <input type="hidden" name="FilterText" value="@Model.FilterText" />
+                <input type="hidden" id="selectedColumns" name="selectedColumns" value="@Model.SelectedColumns" />
+                <input type="hidden" id="pageNumber" name="pageNumber" value="@Model.PageNumber" />
+            </form>
+        </div>
+
+        <!-- Sağ tarafta Tablo ve Sayfalama -->
+        <div class="col-md-8">
+            <h3>Class List</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="selectable-column" onclick="toggleColumn(this, 'ClassName')">Class Name</th>
+                        <th class="selectable-column" onclick="toggleColumn(this, 'StudentCount')">Student Count</th>
+                        <th class="selectable-column" onclick="toggleColumn(this, 'Description')">Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.DisplayedClasses)
+                    {
+                        <tr>
+                            <td>@item.ClassName</td>
+                            <td>@item.StudentCount</td>
+                            <td>@item.Description</td>
+                            <td>
+                                @* Edit ve Delete Butonları *@
+                                <a asp-page="./Index" asp-route-id="@item.Id" asp-page-handler="Edit" class="btn btn-warning btn-sm">Edit</a>
+                                <form method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" asp-page-handler="Delete" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Sayfalama -->
+            <nav>
+                <ul class="pagination">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @((i == Model.PageNumber) ? "active" : "")">
+                            <a class="page-link" asp-page="./Index" asp-route-pageNumber="@i">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
 </div>
-<h2>Add New Class</h2>
 
-<form method="post" asp-page-handler="Add">
-    <div>
-        <label>Class Name:</label>
-        <input type="text" name="FilteredClassList[0].ClassName" required />
-    </div>
-    <div>
-        <label>Student Count:</label>
-        <input type="number" name="FilteredClassList[0].StudentCount" required />
-    </div>
-    <div>
-        <label>Description:</label>
-        <input type="text" name="FilteredClassList[0].Description" required />
-    </div>
-    <button type="submit">Add Class</button>
-</form>
+@section Scripts {
+    <script>
+        const selectedColumns = new Set();
+
+        function toggleColumn(th, columnName) {
+            const columnIndex = Array.from(th.parentNode.children).indexOf(th); // başlığın index'ini al
+            const rows = document.querySelectorAll("tbody tr"); // tüm satırları al
+
+            if (selectedColumns.has(columnName)) {
+                selectedColumns.delete(columnName);
+                th.style.backgroundColor = ''; // başlığı eski haline döndür
+
+                // O sütundaki hücreleri eski haline döndür
+                rows.forEach(row => {
+                    row.children[columnIndex].style.backgroundColor = '';
+                });
+            } else {
+                selectedColumns.add(columnName);
+                th.style.backgroundColor = '#d1e7dd'; // başlık yeşilimsi
+
+                // O sütundaki tüm hücreleri renklendir
+                rows.forEach(row => {
+                    row.children[columnIndex].style.backgroundColor = '#d1e7dd';
+                });
+            }
+
+            // Hidden input'u güncelle
+            document.getElementById('selectedColumns').value = Array.from(selectedColumns).join(',');
+        }
+    </script>
+
+}
