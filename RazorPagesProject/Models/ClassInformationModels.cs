@@ -2,13 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 public class ClassInformationModel
 {
-    public int Id { get; set; } // Bu tabloda gösterilmeyecek ama arka planda kullanılacak.
+    public int Id { get; set; }
 
-    [Required(ErrorMessage = "Class Name is required.")]
+    // Required ve non-nullable olacak şekilde düzenle:
     public string ClassName { get; set; } = string.Empty;
 
-    public int StudentCount { get; set; } // Sayı olduğu için boş geçilemez zaten.
+    public int StudentCount { get; set; }
 
-    [Required(ErrorMessage = "Description is required.")]
+    // Required ve non-nullable olacak şekilde düzenle:
     public string Description { get; set; } = string.Empty;
 }
