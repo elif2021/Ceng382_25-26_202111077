@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Models\ClassInformationModel.cs" />
-    
-    <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Models\ClassInformationModels.cs" />
+    <Compile Include="Models\ClassInformationTable.cs" />
+    <Compile Include="Models\Utils.cs" />
   </ItemGroup>
 
 </Project>
