@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Compile Include="Models\ClassInformationModel.cs" />
-    <Compile Include="Models\ClassInformationTable.cs" />
+    
     <Compile Include="Helpers\Utils.cs" />
   </ItemGroup>
 
