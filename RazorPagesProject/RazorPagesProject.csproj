@@ -6,10 +6,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="Models\ClassInformationModels.cs" />
-    <Compile Include="Models\ClassInformationTable.cs" />
-    <Compile Include="Models\Utils.cs" />
-  </ItemGroup>
-
 </Project>
