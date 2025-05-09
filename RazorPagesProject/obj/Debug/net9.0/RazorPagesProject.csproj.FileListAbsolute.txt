@@ -19,6 +19,7 @@ C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debu
 C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\scopedcss\bundle\RazorPagesProject.styles.css
 C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\scopedcss\projectbundle\RazorPagesProject.bundle.scp.css
 C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\compressed\2bxjzfls5y-b9sayid5wm.gz
+C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\compressed\w4sgncewfm-2vgqw6grfk.gz
 C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\compressed\iumntnzj1n-61n19gt1b8.gz
 C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\compressed\999jexk0bj-xtxxf3hu2r.gz
 C:\Users\User\Desktop\Ceng382\Ceng382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\compressed\wf5222wrxs-bqjiyaj88i.gz
