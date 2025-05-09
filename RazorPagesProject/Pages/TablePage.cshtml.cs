@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace RazorPagesProject.Pages
 {
     public class TablePageModel : PageModel
-    {
+    {}
        public string? Username { get; set; }
 
     public void OnGet()
