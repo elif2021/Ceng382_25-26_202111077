@@ -1,48 +1,62 @@
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Text.Json;
 using RazorPagesProject.Models;
 
 namespace RazorPagesProject.Pages
 {
     public class LoginModel : PageModel
     {
-        [BindProperty] public string Username { get; set; }
-        [BindProperty] public string Password { get; set; }
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
 
-        public IActionResult OnPost()
+        public void OnGet()
         {
-            var path = Path.Combine("wwwroot", "data", "users.json");
-            var jsonData = System.IO.File.ReadAllText(path);
-            var users = JsonSerializer.Deserialize<List<User>>(jsonData);
+            // Sayfa yüklendiğinde hata mesajı varsa göster
+        }
 
-            var user = users.FirstOrDefault(u => u.Username == Username && u.Password == Password && u.IsActive);
+        public IActionResult OnPost(string Username, string Password)
+        {
+            // JSON dosyasındaki kullanıcıları oku
+            var usersFile = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/data/users.json");
+            var jsonString = System.IO.File.ReadAllText(usersFile);
+            var users = JsonSerializer.Deserialize<List<User>>(jsonString);
+
+            var user = users?.FirstOrDefault(u => u.Username == Username && u.Password == Password && u.IsActive);
 
             if (user != null)
             {
+                // Kullanıcı bulundu ve giriş başarılı
+                // Token üret
                 var token = Guid.NewGuid().ToString();
 
-                // Session
-                HttpContext.Session.SetString("username", user.Username);
-                HttpContext.Session.SetString("token", token);
-                HttpContext.Session.SetString("session_id", HttpContext.Session.Id);
+                // Session'a veri ekle
+                HttpContext.Session.SetString("Username", user.Username);
+                HttpContext.Session.SetString("Token", token);
+                HttpContext.Session.SetString("SessionId", HttpContext.Session.Id);
 
-                // Cookie
-                var cookieOptions = new CookieOptions
+                // Cookie'lere veriyi ekle
+                Response.Cookies.Append("Username", user.Username, new Microsoft.AspNetCore.Http.CookieOptions
                 {
                     Expires = DateTime.Now.AddMinutes(30),
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict
-                };
-                Response.Cookies.Append("username", user.Username, cookieOptions);
-                Response.Cookies.Append("token", token, cookieOptions);
-                Response.Cookies.Append("session_id", HttpContext.Session.Id, cookieOptions);
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict
+                });
+                Response.Cookies.Append("Token", token, new Microsoft.AspNetCore.Http.CookieOptions
+                {
+                    Expires = DateTime.Now.AddMinutes(30),
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict
+                });
 
-                return RedirectToPage("Index"); // Giriş sonrası yönlendirme
+                // Yönlendirme
+                return RedirectToPage("/TablePage"); // TablePage sayfasına yönlendir
             }
 
+            // Giriş başarısız
             ErrorMessage = "Username or password is incorrect.";
             return Page();
         }
