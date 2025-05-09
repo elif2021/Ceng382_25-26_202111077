@@ -2,6 +2,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);  // 30 dakika boşta kalınca oturumu kapatır
+    options.Cookie.HttpOnly = true;                 // güvenlik için
+    options.Cookie.IsEssential = true;             // GDPR uyumu için
+});
 
 var app = builder.Build();
 
@@ -9,17 +15,18 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-app.UseStaticFiles();
-app.MapRazorPages();
+app.UseSession();  // Session middleware'ini ekliyoruz (önemli)
 
+app.UseAuthorization();
+
+app.MapRazorPages();
 
 app.Run();
