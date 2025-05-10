@@ -9,6 +9,7 @@ namespace RazorPagesProject.Data
             : base(options)
         {
         }
+        
 
         public DbSet<Class> Classes { get; set; }
     }
