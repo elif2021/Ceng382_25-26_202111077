@@ -1,0 +1,28 @@
+@page
+@model YourProjectNamespace.Pages.Classes.IndexModel
+
+<h2>Classes</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Person Count</th>
+            <th>Description</th>
+            <th>Is Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ClassList)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.PersonCount</td>
+                <td>@item.Description</td>
+                <td>@(item.IsActive ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>
