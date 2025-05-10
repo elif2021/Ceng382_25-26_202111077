@@ -23,42 +23,35 @@
             <h3>@(Model.NewClass.Id == 0 ? "Add New Class" : "Edit Class")</h3>
             <form method="post">
                 <input type="hidden" asp-for="NewClass.Id" />
-
                 <div class="mb-3">
                     <label class="form-label">Class Name</label>
                     <input type="text" class="form-control" asp-for="NewClass.ClassName" required />
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">Student Count</label>
                     <input type="number" class="form-control" asp-for="NewClass.StudentCount" required />
                 </div>
-
                 <div class="mb-3">
                     <label class="form-label">Description</label>
                     <textarea class="form-control" asp-for="NewClass.Description"></textarea>
                 </div>
-
                 <button type="submit" class="btn btn-primary mb-2" asp-page-handler="Add">Add Class</button>
                 <button type="submit" class="btn btn-success mb-2" asp-page-handler="Edit">Save Changes</button>
             </form>
         </div>
 
-        <!-- Export Butonları (ClassName zorunlu olmasın) -->
+        <!-- Export Butonları -->
         <div class="col-md-4">
             <h3>Export Data</h3>
             <form method="post">
-                <!-- Export Data Button -->
                 <button type="submit" asp-page-handler="SmartExportJson" class="btn btn-primary mb-2">Export Data as JSON</button>
-                
-                <!-- Export Filtered Data Button -->
                 <input type="hidden" name="FilterText" value="@Model.FilterText" />
                 <input type="hidden" id="selectedColumns" name="selectedColumns" value="@Model.SelectedColumns" />
                 <input type="hidden" id="pageNumber" name="pageNumber" value="@Model.PageNumber" />
             </form>
         </div>
 
-        <!-- Sağ tarafta Tablo ve Sayfalama -->
+        <!-- Tablo ve Sayfalama -->
         <div class="col-md-8">
             <h3>Class List</h3>
             <table class="table table-striped">
@@ -78,7 +71,6 @@
                             <td>@item.StudentCount</td>
                             <td>@item.Description</td>
                             <td>
-                                @* Edit ve Delete Butonları *@
                                 <a asp-page="./Index" asp-route-id="@item.Id" asp-page-handler="Edit" class="btn btn-warning btn-sm">Edit</a>
                                 <form method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
@@ -89,8 +81,6 @@
                     }
                 </tbody>
             </table>
-
-            <!-- Sayfalama -->
             <nav>
                 <ul class="pagination">
                     @for (int i = 1; i <= Model.TotalPages; i++)
@@ -110,30 +100,24 @@
         const selectedColumns = new Set();
 
         function toggleColumn(th, columnName) {
-            const columnIndex = Array.from(th.parentNode.children).indexOf(th); // başlığın index'ini al
-            const rows = document.querySelectorAll("tbody tr"); // tüm satırları al
+            const columnIndex = Array.from(th.parentNode.children).indexOf(th);
+            const rows = document.querySelectorAll("tbody tr");
 
             if (selectedColumns.has(columnName)) {
                 selectedColumns.delete(columnName);
-                th.style.backgroundColor = ''; // başlığı eski haline döndür
-
-                // O sütundaki hücreleri eski haline döndür
+                th.style.backgroundColor = '';
                 rows.forEach(row => {
                     row.children[columnIndex].style.backgroundColor = '';
                 });
             } else {
                 selectedColumns.add(columnName);
-                th.style.backgroundColor = '#d1e7dd'; // başlık yeşilimsi
-
-                // O sütundaki tüm hücreleri renklendir
+                th.style.backgroundColor = '#d1e7dd';
                 rows.forEach(row => {
                     row.children[columnIndex].style.backgroundColor = '#d1e7dd';
                 });
             }
 
-            // Hidden input'u güncelle
             document.getElementById('selectedColumns').value = Array.from(selectedColumns).join(',');
         }
     </script>
-
 }
