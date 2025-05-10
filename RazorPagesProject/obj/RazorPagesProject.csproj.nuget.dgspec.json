@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\Ceng382\\Ceng382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj": {}
+    "C:\\Users\\User\\Desktop\\Ceng382\\CENG382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\Ceng382\\Ceng382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj": {
+    "C:\\Users\\User\\Desktop\\Ceng382\\CENG382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\Ceng382\\Ceng382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\Ceng382\\CENG382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj",
         "projectName": "RazorPagesProject",
-        "projectPath": "C:\\Users\\User\\Desktop\\Ceng382\\Ceng382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj",
+        "projectPath": "C:\\Users\\User\\Desktop\\Ceng382\\CENG382_25-26_202111077\\RazorPagesProject\\RazorPagesProject.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\Ceng382\\Ceng382_25-26_202111077\\RazorPagesProject\\obj\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\Ceng382\\CENG382_25-26_202111077\\RazorPagesProject\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -43,6 +43,12 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
