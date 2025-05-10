@@ -1,13 +1,20 @@
+using Microsoft.EntityFrameworkCore;
+using RazorPagesProject.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);  // 30 dakika boşta kalınca oturumu kapatır
-    options.Cookie.HttpOnly = true;                 // güvenlik için
-    options.Cookie.IsEssential = true;             // GDPR uyumu için
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
+
+//  ÖDEV: Database context'i buraya ekliyoruz
+builder.Services.AddDbContext<SchoolDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolDbConnection")));
 
 var app = builder.Build();
 
@@ -23,7 +30,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession();  // Session middleware'ini ekliyoruz (önemli)
+app.UseSession();
 
 app.UseAuthorization();
 

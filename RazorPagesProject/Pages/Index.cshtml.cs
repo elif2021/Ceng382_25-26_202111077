@@ -1,16 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using RazorPagesProject.Data;
 using RazorPagesProject.Models;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 
 namespace RazorPagesProject.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly SchoolDbContext _context;
+
+        public IndexModel(SchoolDbContext context)
+        {
+            _context = context;
+        }
+
         public List<ClassInformationTable> DisplayedClasses { get; set; } = new List<ClassInformationTable>();
         public int TotalPages { get; set; }
         public const int PageSize = 10;
@@ -24,138 +30,109 @@ namespace RazorPagesProject.Pages
         [BindProperty]
         public string SelectedColumns { get; set; }
 
-        public static List<ClassInformationModel> ClassList { get; set; } = new List<ClassInformationModel>();
-
         [BindProperty]
         public ClassInformationModel NewClass { get; set; } = new ClassInformationModel();
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            // 🔐 Giriş kontrolü
-            var sessionToken = HttpContext.Session.GetString("token");
-            var sessionUsername = HttpContext.Session.GetString("username");
-            var sessionId = HttpContext.Session.GetString("session_id");
+            IQueryable<ClassInformationModel> query = _context.Classes;
 
-            var cookieToken = Request.Cookies["token"];
-            var cookieUsername = Request.Cookies["username"];
-            var cookieSessionId = Request.Cookies["session_id"];
-
-            if (sessionToken == null || cookieToken == null ||
-                sessionToken != cookieToken || sessionUsername != cookieUsername ||
-                sessionId != cookieSessionId)
+            if (!string.IsNullOrWhiteSpace(FilterText))
             {
-                Response.Redirect("/Login");
-                return;
+                query = query.Where(c => c.ClassName.Contains(FilterText));
             }
 
-            // Sahte veri ekleniyor
-            if (!ClassList.Any())
-            {
-                for (int i = 1; i <= 100; i++)
-                {
-                    ClassList.Add(new ClassInformationModel
-                    {
-                        Id = i,
-                        ClassName = $"Class {i}",
-                        StudentCount = 20 + (i % 10),
-                        Description = $"Description {i}"
-                    });
-                }
-            }
+            int totalCount = await query.CountAsync();
+            TotalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
 
-            var filteredClasses = string.IsNullOrWhiteSpace(FilterText)
-                ? ClassList
-                : ClassList.Where(c => c.ClassName.Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
-
-            TotalPages = (int)Math.Ceiling(filteredClasses.Count / (double)PageSize);
-            DisplayedClasses = filteredClasses
+            var classes = await query
                 .Skip((PageNumber - 1) * PageSize)
                 .Take(PageSize)
-                .Select(c => new ClassInformationTable
-                {
-                    Id = c.Id,
-                    ClassName = c.ClassName,
-                    StudentCount = c.StudentCount,
-                    Description = c.Description
-                }).ToList();
+                .ToListAsync();
+
+            DisplayedClasses = classes.Select(c => new ClassInformationTable
+            {
+                Id = c.Id,
+                ClassName = c.ClassName,
+                StudentCount = c.StudentCount,
+                Description = c.Description
+            }).ToList();
         }
 
-        public IActionResult OnPostAdd()
+        public async Task<IActionResult> OnPostAddAsync()
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
-            NewClass.Id = ClassList.Count > 0 ? ClassList.Max(c => c.Id) + 1 : 1;
-            ClassList.Add(NewClass);
+            _context.Classes.Add(NewClass);
+            await _context.SaveChangesAsync();
 
             return RedirectToPage();
         }
 
-        public IActionResult OnPostDelete(int id)
+        public async Task<IActionResult> OnPostDeleteAsync(int id)
         {
-            var classToRemove = ClassList.FirstOrDefault(c => c.Id == id);
+            var classToRemove = await _context.Classes.FindAsync(id);
             if (classToRemove != null)
             {
-                ClassList.Remove(classToRemove);
+                _context.Classes.Remove(classToRemove);
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToPage();
         }
 
-        public void OnGetEdit(int id)
+        public async Task OnGetEditAsync(int id)
         {
-            var classToEdit = ClassList.FirstOrDefault(c => c.Id == id);
+            var classToEdit = await _context.Classes.FindAsync(id);
             if (classToEdit != null)
             {
                 NewClass = classToEdit;
             }
         }
 
-        public IActionResult OnPostEdit()
+        public async Task<IActionResult> OnPostEditAsync()
         {
-            var classToUpdate = ClassList.FirstOrDefault(c => c.Id == NewClass.Id);
+            var classToUpdate = await _context.Classes.FindAsync(NewClass.Id);
             if (classToUpdate != null)
             {
                 classToUpdate.ClassName = NewClass.ClassName;
                 classToUpdate.StudentCount = NewClass.StudentCount;
                 classToUpdate.Description = NewClass.Description;
+
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToPage();
         }
 
-        public IActionResult OnPostSmartExportJson()
+        public async Task<IActionResult> OnPostSmartExportJsonAsync()
         {
             var selectedColumnsList = string.IsNullOrEmpty(SelectedColumns) ? new List<string>() : SelectedColumns.Split(',').ToList();
-            int pageNumber = string.IsNullOrEmpty(Request.Form["pageNumber"]) ? 1 : int.Parse(Request.Form["pageNumber"]);
 
-            if (!string.IsNullOrWhiteSpace(FilterText) && selectedColumnsList.Any())
-            {
-                var filteredClasses = ClassList.Where(c => c.ClassName.Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
-                var fpageClasses = filteredClasses.Skip((pageNumber - 1) * PageSize).Take(PageSize).ToList();
-                string json = Utils.Instance.ExportToJson(fpageClasses, selectedColumnsList);
-                return File(Encoding.UTF8.GetBytes(json), "application/json", "filtered_columns.json");
-            }
+            IQueryable<ClassInformationModel> query = _context.Classes;
 
             if (!string.IsNullOrWhiteSpace(FilterText))
             {
-                var filteredClasses = ClassList.Where(c => c.ClassName.Contains(FilterText, StringComparison.OrdinalIgnoreCase)).ToList();
-                string json = JsonSerializer.Serialize(filteredClasses);
-                return File(Encoding.UTF8.GetBytes(json), "application/json", "filtered_rows.json");
+                query = query.Where(c => c.ClassName.Contains(FilterText));
             }
 
+            var pageClasses = await query
+                .Skip((PageNumber - 1) * PageSize)
+                .Take(PageSize)
+                .ToListAsync();
+
+            string json;
             if (selectedColumnsList.Any())
             {
-                var cpageClasses = ClassList.Skip((pageNumber - 1) * PageSize).Take(PageSize).ToList();
-                string json = Utils.Instance.ExportToJson(cpageClasses, selectedColumnsList);
-                return File(Encoding.UTF8.GetBytes(json), "application/json", "columns_only.json");
+                json = Utils.Instance.ExportToJson(pageClasses, selectedColumnsList);
+            }
+            else
+            {
+                json = JsonSerializer.Serialize(pageClasses);
             }
 
-            var pageClasses = ClassList.Skip((pageNumber - 1) * PageSize).Take(PageSize).ToList();
-            string allJson = Utils.Instance.ExportToJson(pageClasses);
-            return File(Encoding.UTF8.GetBytes(allJson), "application/json", "all_data.json");
+            return File(Encoding.UTF8.GetBytes(json), "application/json", "export.json");
         }
     }
 }
