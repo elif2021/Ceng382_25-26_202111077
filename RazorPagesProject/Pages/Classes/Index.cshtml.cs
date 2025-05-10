@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using YourProjectNamespace.Data;
-using YourProjectNamespace.Models;
+using RazorPagesProject.Data;
+using RazorPagesProject.Models;
 
-namespace YourProjectNamespace.Pages.Classes
+namespace RazorPagesProject.Pages.Classes
 {
     public class IndexModel : PageModel
     {
