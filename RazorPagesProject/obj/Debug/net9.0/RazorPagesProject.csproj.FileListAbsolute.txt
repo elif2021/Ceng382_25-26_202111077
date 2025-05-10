@@ -1,9 +1,0 @@
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.csproj.AssemblyReference.cache
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.AssemblyInfoInputs.cache
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.AssemblyInfo.cs
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.csproj.CoreCompileInputs.cache
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.RazorAssemblyInfo.cache
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.RazorAssemblyInfo.cs
-C:\Users\User\Desktop\Ceng382\CENG382_25-26_202111077\RazorPagesProject\obj\Debug\net9.0\RazorPagesProject.sourcelink.json
