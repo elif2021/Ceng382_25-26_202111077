@@ -24,11 +24,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
-else
-{
-    // Burada geliştirme aşamasında HTTPS'yi devre dışı bırakabilirsin
-    app.UseHttpsRedirection(); // HTTPS yönlendirmesi
-}
+
 
 app.UseStaticFiles();
 app.UseRouting();
