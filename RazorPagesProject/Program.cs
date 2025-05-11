@@ -12,7 +12,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-//  ÖDEV: Database context'i buraya ekliyoruz
+// Database context'i ekliyoruz
 builder.Services.AddDbContext<SchoolDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolDbConnection")));
 
@@ -25,13 +25,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// HTTPS yönlendirmesini devre dışı bırakmak için bu satırı kaldırın
+//app.UseHttpsRedirection(); // Bunu kaldırın
+
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseSession();
-
 app.UseAuthorization();
 
 app.MapRazorPages();

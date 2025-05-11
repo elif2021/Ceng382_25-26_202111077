@@ -1,9 +1,16 @@
 @page
 @model RazorPagesProject.Pages.Classes.IndexModel
+@{
+    ViewData["Title"] = "Class List";
+}
 
-<h2>Classes</h2>
+<h2>Class List</h2>
 
-<table class="table">
+<p>
+    <a asp-page="Create" class="btn btn-primary">+ Create New Class</a>
+</p>
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Id</th>
@@ -11,17 +18,31 @@
             <th>Person Count</th>
             <th>Description</th>
             <th>Is Active</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.ClassList)
+        @if (Model.ClassList != null && Model.ClassList.Any())
+        {
+            foreach (var item in Model.ClassList)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.PersonCount</td>
+                    <td>@item.Description</td>
+                    <td>@(item.IsActive ? "Yes" : "No")</td>
+                    <td>
+                        <a asp-page="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-page="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@item.Id</td>
-                <td>@item.Name</td>
-                <td>@item.PersonCount</td>
-                <td>@item.Description</td>
-                <td>@(item.IsActive ? "Yes" : "No")</td>
+                <td colspan="6">No classes found.</td>
             </tr>
         }
     </tbody>
